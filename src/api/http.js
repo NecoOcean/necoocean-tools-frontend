@@ -76,6 +76,10 @@ export function put(path, json) {
   return request(path, { method: 'PUT', json })
 }
 
+export function patch(path, json) {
+  return request(path, { method: 'PATCH', json })
+}
+
 export function del(path) {
   return request(path, { method: 'DELETE' })
 }

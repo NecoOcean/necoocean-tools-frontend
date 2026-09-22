@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h1 class="page-title">工具管理</h1>
+    <div class="head">
+      <h1 class="page-title">工具管理</h1>
+      <RouterLink class="chip is-active" to="/admin/tools/new">新建工具</RouterLink>
+    </div>
     <p v-if="loading" class="state-line">加载中…</p>
     <p v-else-if="error" class="state-line is-error">{{ error }}</p>
     <template v-else>
@@ -14,6 +17,7 @@
             <th>状态</th>
             <th>版本</th>
             <th>更新</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -24,6 +28,7 @@
             <td>{{ statusText(row.status) }}</td>
             <td>{{ row.latest_version || '—' }}</td>
             <td>{{ formatDateTime(row.updated_at) }}</td>
+            <td><RouterLink :to="`/admin/tools/${row.id}`">编辑</RouterLink></td>
           </tr>
         </tbody>
       </table>
@@ -67,8 +72,15 @@ function statusText(status) {
 </script>
 
 <style scoped>
-.page-title {
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
   margin-bottom: var(--sp-4);
+}
+
+.page-title {
   font-size: clamp(26px, 3.4vw, 38px);
   font-weight: 600;
 }
@@ -91,6 +103,10 @@ function statusText(status) {
 .table th {
   color: var(--tx-3);
   font-weight: 400;
+}
+
+.table a {
+  color: var(--brand);
 }
 
 code {

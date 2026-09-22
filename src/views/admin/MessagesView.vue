@@ -19,6 +19,7 @@
           · {{ row.status_text || row.status }}
           · {{ row.audit_status_text || row.audit_status }}
           <template v-if="row.has_email"> · 含邮箱</template>
+          · <RouterLink :to="`/admin/messages/${row.id}`">详情 / 回复</RouterLink>
         </p>
       </article>
       <p v-if="messages.length === 0" class="state-line">暂无留言</p>
@@ -99,5 +100,9 @@ async function load() {
   margin-top: var(--sp-2);
   color: var(--tx-3);
   font-size: 12px;
+}
+
+.meta a {
+  color: var(--brand);
 }
 </style>
