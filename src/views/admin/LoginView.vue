@@ -1,28 +1,42 @@
 <template>
-  <div class="visor page-block login">
-    <h1>管理员登录</h1>
-    <form class="login__form" @submit.prevent="onSubmit">
-      <input
-        ref="usernameInput"
-        name="username"
-        class="search"
-        type="text"
-        autocomplete="username"
-        placeholder="用户名"
-        required
-      />
-      <input
-        ref="passwordInput"
-        name="password"
-        class="search"
-        type="password"
-        autocomplete="current-password"
-        placeholder="密码"
-        required
-      />
-      <button class="chip is-active" type="submit" :disabled="busy">{{ busy ? '登录中…' : '登录' }}</button>
-    </form>
-    <p v-if="message" class="state-line" :class="{ 'is-error': isError }">{{ message }}</p>
+  <div class="admin-root login-page">
+    <div class="login-card">
+      <div class="login-brand">
+        <span class="admin-brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
+            <path d="M3 15c3.5 0 3.5-3 7-3s3.5 3 7 3 4-3 4-3" />
+            <path d="M3 9.5c3.5 0 3.5-3 7-3s3.5 3 7 3 4-3 4-3" opacity=".55" />
+          </svg>
+        </span>
+        <div>
+          <h1>NecoOcean Admin</h1>
+          <p>管理员登录</p>
+        </div>
+      </div>
+      <form class="login-form" @submit.prevent="onSubmit">
+        <input
+          ref="usernameInput"
+          name="username"
+          class="admin-input"
+          type="text"
+          autocomplete="username"
+          placeholder="用户名"
+          required
+        />
+        <input
+          ref="passwordInput"
+          name="password"
+          class="admin-input"
+          type="password"
+          autocomplete="current-password"
+          placeholder="密码"
+          required
+        />
+        <button class="admin-btn" type="submit" :disabled="busy">{{ busy ? '登录中…' : '登录' }}</button>
+      </form>
+      <p v-if="message" class="admin-state" :class="{ 'is-error': isError }">{{ message }}</p>
+      <RouterLink class="back" to="/">← 返回前台</RouterLink>
+    </div>
   </div>
 </template>
 
@@ -31,6 +45,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ApiError } from '../../api/http'
 import { ensureCsrf, login } from '../../api/adminApi'
+import '../../styles/admin.css'
 
 const router = useRouter()
 const route = useRoute()
@@ -41,7 +56,6 @@ const message = ref('')
 const isError = ref(false)
 
 onMounted(() => {
-  // 进页就种下 csrf_token，避免点击登录时才第一次拿 Cookie。
   ensureCsrf().catch(() => {})
 })
 
@@ -49,7 +63,6 @@ async function onSubmit() {
   busy.value = true
   message.value = ''
   isError.value = false
-  // 直接读 DOM，避免浏览器自动填充未触发 v-model 导致口令空提交。
   const username = (usernameInput.value?.value || '').trim()
   const password = passwordInput.value?.value || ''
   try {
@@ -74,14 +87,63 @@ async function onSubmit() {
 </script>
 
 <style scoped>
-.login__form {
+.login-page {
+  min-height: 100vh;
   display: grid;
-  gap: var(--sp-3);
-  max-width: 360px;
-  margin-top: var(--sp-5);
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(700px 360px at 20% 10%, rgba(124, 140, 253, 0.18), transparent 60%),
+    radial-gradient(600px 320px at 90% 80%, rgba(91, 108, 240, 0.12), transparent 55%),
+    var(--ad-bg);
 }
 
-.login__form .chip {
-  justify-self: start;
+.login-card {
+  width: min(400px, 100%);
+  padding: 28px 26px 24px;
+  border-radius: 18px;
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.login-brand h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.login-brand p {
+  margin: 4px 0 0;
+  color: var(--ad-tx-3);
+  font-size: 13px;
+}
+
+.login-form {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-btn {
+  margin-top: 4px;
+  width: 100%;
+}
+
+.back {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--ad-tx-3);
+  font-size: 13px;
+}
+
+.back:hover {
+  color: var(--ad-accent);
 }
 </style>

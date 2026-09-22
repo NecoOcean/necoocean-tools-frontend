@@ -1,42 +1,48 @@
 <template>
   <div>
-    <h1 class="page-title">站点设置</h1>
-    <p v-if="loading" class="state-line">加载中…</p>
-    <p v-else-if="loadError" class="state-line is-error">{{ loadError }}</p>
+    <header class="head">
+      <div>
+        <h1 class="admin-page-title">系统设置</h1>
+        <p class="admin-page-sub">站点文案、留言策略、导出与口令维护</p>
+      </div>
+    </header>
+
+    <p v-if="loading" class="admin-state">加载中…</p>
+    <p v-else-if="loadError" class="admin-state is-error">{{ loadError }}</p>
     <form v-else class="form" @submit.prevent="onSave">
-      <input v-model="form.site_title" class="search" type="text" placeholder="站点标题" />
-      <textarea v-model="form.home_intro" class="textarea" rows="2" placeholder="首页简介" />
-      <input v-model="form.copyright" class="search" type="text" placeholder="版权文案" />
-      <input v-model="form.icp_number" class="search" type="text" placeholder="备案号（选填）" />
-      <textarea v-model="form.about_content" class="textarea" rows="5" placeholder="关于我" />
-      <textarea v-model="form.privacy_content" class="textarea" rows="5" placeholder="隐私政策（后台维护；公开页暂用固定摘要）" />
-      <textarea v-model="form.announcement" class="textarea" rows="2" placeholder="公告（选填）" />
+      <input v-model="form.site_title" class="admin-input" type="text" placeholder="站点标题" />
+      <textarea v-model="form.home_intro" class="admin-textarea" rows="2" placeholder="首页简介" />
+      <input v-model="form.copyright" class="admin-input" type="text" placeholder="版权文案" />
+      <input v-model="form.icp_number" class="admin-input" type="text" placeholder="备案号（选填）" />
+      <textarea v-model="form.about_content" class="admin-textarea" rows="5" placeholder="关于我" />
+      <textarea v-model="form.privacy_content" class="admin-textarea" rows="5" placeholder="隐私政策（后台维护；公开页暂用固定摘要）" />
+      <textarea v-model="form.announcement" class="admin-textarea" rows="2" placeholder="公告（选填）" />
       <label class="check">
         <input v-model="form.message_enabled" type="checkbox" />
         开放留言提交
       </label>
-      <select v-model="form.message_audit_mode" class="search select">
+      <select v-model="form.message_audit_mode" class="admin-select">
         <option value="post">先发后审（一期）</option>
         <option value="pre">先审后发（二期）</option>
       </select>
-      <textarea v-model="form.message_keywords" class="textarea" rows="2" placeholder="关键词（逗号或换行分隔）" />
+      <textarea v-model="form.message_keywords" class="admin-textarea" rows="2" placeholder="关键词（逗号或换行分隔）" />
       <div class="form__actions">
-        <button class="chip is-active" type="submit" :disabled="busy">{{ busy ? '保存中…' : '保存设置' }}</button>
-        <span v-if="hint" class="state-line" :class="{ 'is-error': isError }">{{ hint }}</span>
+        <button class="admin-btn" type="submit" :disabled="busy">{{ busy ? '保存中…' : '保存设置' }}</button>
+        <span v-if="hint" class="admin-state" :class="{ 'is-error': isError }">{{ hint }}</span>
       </div>
     </form>
 
     <section class="section">
       <h2>数据导出</h2>
-      <p class="state-line">默认不含邮箱。勾选后才会导出 contact_email 并写审计。</p>
+      <p class="admin-muted">默认不含邮箱。勾选后才会导出 contact_email 并写审计。</p>
       <div class="export-row">
-        <select v-model="exportType" class="search select">
+        <select v-model="exportType" class="admin-select compact">
           <option value="tools">tools</option>
           <option value="messages">messages</option>
           <option value="replies">replies</option>
           <option value="all">all</option>
         </select>
-        <select v-model="exportFormat" class="search select">
+        <select v-model="exportFormat" class="admin-select compact">
           <option value="json">json</option>
           <option value="csv">csv</option>
         </select>
@@ -44,32 +50,32 @@
           <input v-model="includeEmail" type="checkbox" />
           含邮箱
         </label>
-        <button class="chip is-active" type="button" :disabled="exportBusy" @click="onExport">
+        <button class="admin-btn" type="button" :disabled="exportBusy" @click="onExport">
           {{ exportBusy ? '导出中…' : '下载' }}
         </button>
       </div>
-      <p v-if="exportHint" class="state-line" :class="{ 'is-error': exportError }">{{ exportHint }}</p>
+      <p v-if="exportHint" class="admin-state" :class="{ 'is-error': exportError }">{{ exportHint }}</p>
     </section>
 
     <section class="section">
       <h2>修改口令</h2>
       <form class="form" @submit.prevent="onChangePassword">
-        <input v-model="pwd.old_password" class="search" type="password" autocomplete="current-password" placeholder="当前口令" required />
-        <input v-model="pwd.new_password" class="search" type="password" autocomplete="new-password" placeholder="新口令（8～72）" required minlength="8" maxlength="72" />
+        <input v-model="pwd.old_password" class="admin-input" type="password" autocomplete="current-password" placeholder="当前口令" required />
+        <input v-model="pwd.new_password" class="admin-input" type="password" autocomplete="new-password" placeholder="新口令（8～72）" required minlength="8" maxlength="72" />
         <div class="form__actions">
-          <button class="chip is-active" type="submit" :disabled="pwdBusy">{{ pwdBusy ? '提交中…' : '更新口令' }}</button>
-          <span v-if="pwdHint" class="state-line" :class="{ 'is-error': pwdError }">{{ pwdHint }}</span>
+          <button class="admin-btn" type="submit" :disabled="pwdBusy">{{ pwdBusy ? '提交中…' : '更新口令' }}</button>
+          <span v-if="pwdHint" class="admin-state" :class="{ 'is-error': pwdError }">{{ pwdHint }}</span>
         </div>
       </form>
     </section>
 
     <section class="section">
       <h2>存储维护</h2>
-      <p class="state-line">手动清理无登记的 COS 孤儿对象（与每日 03:30 任务同逻辑）。</p>
-      <button class="chip" type="button" :disabled="orphanBusy" @click="onCleanup">
+      <p class="admin-muted">手动清理无登记的 COS 孤儿对象（与每日 03:30 任务同逻辑）。</p>
+      <button class="admin-btn admin-btn--ghost" type="button" :disabled="orphanBusy" @click="onCleanup">
         {{ orphanBusy ? '清理中…' : '立即清理孤儿对象' }}
       </button>
-      <p v-if="orphanHint" class="state-line" :class="{ 'is-error': orphanError }">{{ orphanHint }}</p>
+      <p v-if="orphanHint" class="admin-state" :class="{ 'is-error': orphanError }">{{ orphanHint }}</p>
     </section>
   </div>
 </template>
@@ -225,40 +231,28 @@ async function onCleanup() {
 </script>
 
 <style scoped>
-.page-title {
-  margin-bottom: var(--sp-4);
-  font-size: clamp(26px, 3.4vw, 38px);
-  font-weight: 600;
+.head {
+  margin-bottom: 22px;
 }
 
 .form,
 .section {
   display: grid;
-  gap: var(--sp-3);
+  gap: 12px;
 }
 
 .form {
-  padding: var(--sp-4);
-  border: 1px solid var(--line-1);
-  border-radius: var(--r-md);
-  background: var(--bg-1);
-}
-
-.textarea,
-.select {
-  width: 100%;
-  padding: var(--sp-3) var(--sp-4);
-  border: 1px solid var(--line-1);
-  border-radius: var(--r-md);
-  background: var(--bg-0);
-  color: var(--tx-1);
+  padding: 18px;
+  border: 1px solid var(--ad-line);
+  border-radius: var(--ad-radius);
+  background: var(--ad-panel);
 }
 
 .check {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--tx-2);
+  color: var(--ad-tx-2);
   font-size: 14px;
 }
 
@@ -267,19 +261,19 @@ async function onCleanup() {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sp-3);
+  gap: 12px;
 }
 
 .section {
-  margin-top: var(--sp-7);
+  margin-top: 28px;
 }
 
 .section h2 {
-  font-size: 20px;
+  margin: 0;
+  font-size: 18px;
 }
 
-.export-row .select,
-.export-row .search {
+.compact {
   width: auto;
   min-width: 120px;
   flex: 0 0 auto;

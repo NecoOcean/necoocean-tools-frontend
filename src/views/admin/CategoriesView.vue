@@ -1,41 +1,50 @@
 <template>
   <div>
-    <h1 class="page-title">分类管理</h1>
-    <form class="form" @submit.prevent="onCreate">
-      <div class="form__row">
-        <input v-model="name" class="search" type="text" maxlength="50" placeholder="分类名称" required />
-        <input v-model.number="sortOrder" class="search" type="number" placeholder="排序（可空）" />
-        <button class="chip is-active" type="submit" :disabled="busy">新增</button>
+    <header class="head">
+      <div>
+        <h1 class="admin-page-title">分类管理</h1>
+        <p class="admin-page-sub">维护工具分类名称与排序，供前台筛选使用</p>
+      </div>
+    </header>
+
+    <form class="form-card" @submit.prevent="onCreate">
+      <div class="form-row">
+        <input v-model="name" class="admin-input" type="text" maxlength="50" placeholder="分类名称" required />
+        <input v-model.number="sortOrder" class="admin-input narrow" type="number" placeholder="排序" />
+        <button class="admin-btn" type="submit" :disabled="busy">新增</button>
       </div>
     </form>
-    <p v-if="hint" class="state-line" :class="{ 'is-error': isError }">{{ hint }}</p>
-    <p v-if="loading" class="state-line">加载中…</p>
-    <table v-else class="table">
-      <thead>
-        <tr>
-          <th>名称</th>
-          <th>排序</th>
-          <th>工具数</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in categories" :key="row.id">
-          <td>
-            <input v-model="row._name" class="search inline" type="text" maxlength="50" />
-          </td>
-          <td>
-            <input v-model.number="row._sort" class="search inline narrow" type="number" />
-          </td>
-          <td>{{ row.tool_count ?? 0 }}</td>
-          <td class="actions">
-            <button type="button" class="linkish" :disabled="busy" @click="onSave(row)">保存</button>
-            <button type="button" class="linkish danger" :disabled="busy" @click="onDelete(row)">删除</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p v-if="!loading && categories.length === 0" class="state-line">暂无分类</p>
+
+    <p v-if="hint" class="admin-state" :class="{ 'is-error': isError }">{{ hint }}</p>
+    <p v-if="loading" class="admin-state">加载中…</p>
+    <div v-else class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>排序</th>
+            <th>工具数</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in categories" :key="row.id">
+            <td>
+              <input v-model="row._name" class="admin-input inline" type="text" maxlength="50" />
+            </td>
+            <td>
+              <input v-model.number="row._sort" class="admin-input inline narrow" type="number" />
+            </td>
+            <td>{{ row.tool_count ?? 0 }}</td>
+            <td class="actions">
+              <button type="button" class="admin-link btn" :disabled="busy" @click="onSave(row)">保存</button>
+              <button type="button" class="admin-link btn danger" :disabled="busy" @click="onDelete(row)">删除</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p v-if="!loading && categories.length === 0" class="admin-state">暂无分类</p>
   </div>
 </template>
 
@@ -144,63 +153,49 @@ async function onDelete(row) {
 </script>
 
 <style scoped>
-.page-title {
-  margin-bottom: var(--sp-4);
-  font-size: clamp(26px, 3.4vw, 38px);
-  font-weight: 600;
+.head {
+  margin-bottom: 22px;
 }
 
-.form {
-  margin-bottom: var(--sp-4);
+.form-card {
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: var(--ad-radius);
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-line);
 }
 
-.form__row {
+.form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-3);
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.table th,
-.table td {
-  padding: 10px 8px;
-  border-bottom: 1px solid var(--line-1);
-  text-align: left;
-  vertical-align: middle;
-}
-
-.table th {
-  color: var(--tx-3);
-  font-weight: 400;
-}
-
-.inline {
-  min-width: 140px;
-  height: 40px;
+  gap: 12px;
 }
 
 .narrow {
-  width: 88px;
-  min-width: 88px;
+  width: 120px;
+  flex: 0 0 auto;
+}
+
+.inline {
+  height: 38px;
+  min-width: 140px;
 }
 
 .actions {
   display: flex;
-  gap: var(--sp-3);
+  gap: 14px;
   white-space: nowrap;
 }
 
-.linkish {
-  color: var(--brand);
-  font-size: 13px;
+.btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
 }
 
-.linkish.danger {
-  color: var(--danger);
+.btn.danger {
+  color: var(--ad-danger);
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="head">
-      <h1 class="page-title">{{ isNew ? '新建工具' : '编辑工具' }}</h1>
-      <RouterLink class="chip" to="/admin/tools">返回列表</RouterLink>
+      <h1 class="admin-page-title">{{ isNew ? '新建工具' : '编辑工具' }}</h1>
+      <RouterLink class="admin-btn admin-btn--ghost admin-btn--sm" to="/admin/tools">返回列表</RouterLink>
     </div>
 
     <p v-if="loading" class="state-line">加载中…</p>

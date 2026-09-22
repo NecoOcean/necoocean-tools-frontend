@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="head">
-      <h1 class="page-title">留言详情</h1>
-      <RouterLink class="chip" to="/admin/messages">返回列表</RouterLink>
+      <h1 class="admin-page-title">留言详情</h1>
+      <RouterLink class="admin-btn admin-btn--ghost admin-btn--sm" to="/admin/messages">返回列表</RouterLink>
     </div>
     <p v-if="loading" class="state-line">加载中…</p>
     <p v-else-if="error" class="state-line is-error">{{ error }}</p>

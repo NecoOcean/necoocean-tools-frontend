@@ -1,0 +1,488 @@
+/* 后台专属主题（对齐参考稿：深炭底 + 薰衣草紫蓝强调） */
+.admin-root {
+  --ad-bg: #07080c;
+  --ad-panel: #10131a;
+  --ad-panel-2: #151922;
+  --ad-line: rgba(255, 255, 255, 0.07);
+  --ad-line-2: rgba(255, 255, 255, 0.12);
+  --ad-tx: #f3f5fb;
+  --ad-tx-2: #a8b0c4;
+  --ad-tx-3: #6f7890;
+  --ad-accent: #7c8cfd;
+  --ad-accent-2: #5b6cf0;
+  --ad-accent-soft: rgba(124, 140, 253, 0.18);
+  --ad-grad: linear-gradient(135deg, #8b98ff 0%, #5b6cf0 55%, #4a57d8 100%);
+  --ad-danger: #f07178;
+  --ad-radius: 14px;
+  --ad-radius-sm: 10px;
+  --ad-sidebar: 220px;
+  --ad-top: 64px;
+  --ad-font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  /* 兼容既有后台页里仍使用的前台 token */
+  --bg-0: #07080c;
+  --bg-1: #10131a;
+  --bg-2: #151922;
+  --bg-3: #1a1f2b;
+  --tx-1: #f3f5fb;
+  --tx-2: #a8b0c4;
+  --tx-3: #6f7890;
+  --line-1: rgba(255, 255, 255, 0.07);
+  --line-2: rgba(255, 255, 255, 0.12);
+  --brand: #7c8cfd;
+  --brand-soft: rgba(124, 140, 253, 0.18);
+  --danger: #f07178;
+  --warn: #e6b35a;
+
+  min-height: 100vh;
+  background: var(--ad-bg);
+  color: var(--ad-tx);
+  font-family: var(--ad-font);
+}
+
+.admin-root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.admin-top {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--ad-top);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 22px 0 20px;
+  background: rgba(7, 8, 12, 0.92);
+  border-bottom: 1px solid var(--ad-line);
+  backdrop-filter: blur(10px);
+}
+
+.admin-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.admin-brand__mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--ad-grad);
+}
+
+.admin-brand__mark svg {
+  width: 16px;
+  height: 16px;
+}
+
+.admin-top__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-search {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  min-width: 220px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-line);
+  color: var(--ad-tx-3);
+}
+
+.admin-search svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.admin-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ad-tx);
+  font-size: 13px;
+}
+
+.admin-search input::placeholder {
+  color: var(--ad-tx-3);
+}
+
+.admin-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-line);
+  color: var(--ad-tx-2);
+  position: relative;
+}
+
+.admin-icon-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.admin-icon-btn .dot {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff4d57;
+  box-shadow: 0 0 0 2px var(--ad-bg);
+}
+
+.admin-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ad-grad);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border: 0;
+  cursor: pointer;
+}
+
+.admin-body {
+  display: grid;
+  grid-template-columns: var(--ad-sidebar) minmax(0, 1fr);
+  min-height: calc(100vh - var(--ad-top));
+}
+
+.admin-side {
+  padding: 18px 14px 28px;
+  border-right: 1px solid var(--ad-line);
+  background: linear-gradient(180deg, #0b0d14 0%, #080a10 100%);
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-nav a,
+.admin-nav button.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 12px;
+  color: var(--ad-tx-2);
+  font-size: 14px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.admin-nav a svg,
+.admin-nav button.nav-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.admin-nav a:hover,
+.admin-nav button.nav-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ad-tx);
+}
+
+.admin-nav a.is-active {
+  background: var(--ad-accent);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(91, 108, 240, 0.28);
+}
+
+.admin-nav a.is-active svg {
+  opacity: 1;
+}
+
+.admin-nav__foot {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ad-line);
+}
+
+.admin-main {
+  padding: 28px 28px 40px;
+  min-width: 0;
+}
+
+/* 既有 chip / search 控件在后台壳内的暗色适配 */
+.admin-root .chip {
+  background: var(--ad-panel-2);
+  border: 1px solid var(--ad-line-2);
+  color: var(--ad-tx);
+}
+
+.admin-root .chip.is-active {
+  background: var(--ad-grad);
+  border-color: transparent;
+  color: #fff;
+}
+
+.admin-root .search,
+.admin-root input.search,
+.admin-root select.search {
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-line);
+  color: var(--ad-tx);
+}
+
+.admin-root .page-title {
+  color: var(--ad-tx);
+}
+
+.admin-page-title {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.admin-page-sub {
+  margin: 10px 0 0;
+  color: var(--ad-tx-3);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 0;
+  background: var(--ad-grad);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.admin-btn:hover {
+  filter: brightness(1.06);
+}
+
+.admin-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.admin-btn--ghost {
+  background: var(--ad-panel-2);
+  border: 1px solid var(--ad-line-2);
+  color: var(--ad-tx);
+}
+
+.admin-btn--sm {
+  height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.admin-input,
+.admin-select,
+.admin-textarea {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--ad-line);
+  background: var(--ad-panel);
+  color: var(--ad-tx);
+  font-size: 14px;
+  outline: none;
+}
+
+.admin-input:focus,
+.admin-select:focus,
+.admin-textarea:focus {
+  border-color: rgba(124, 140, 253, 0.55);
+  box-shadow: 0 0 0 3px var(--ad-accent-soft);
+}
+
+.admin-textarea {
+  height: auto;
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 88px;
+}
+
+.admin-select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ad-tx-3) 50%),
+    linear-gradient(135deg, var(--ad-tx-3) 50%, transparent 50%);
+  background-position: calc(100% - 16px) 18px, calc(100% - 11px) 18px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 32px;
+}
+
+.admin-card {
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-line);
+  border-radius: var(--ad-radius);
+}
+
+.admin-table-wrap {
+  overflow: auto;
+  border-radius: var(--ad-radius);
+  border: 1px solid var(--ad-line);
+  background: var(--ad-panel);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--ad-line);
+  vertical-align: middle;
+}
+
+.admin-table th {
+  color: var(--ad-tx-3);
+  font-weight: 500;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-link {
+  color: var(--ad-accent);
+  font-size: 13px;
+}
+
+.admin-link:hover {
+  text-decoration: underline;
+}
+
+.admin-muted {
+  color: var(--ad-tx-3);
+  font-size: 13px;
+}
+
+.admin-state {
+  margin: 16px 0;
+  color: var(--ad-tx-3);
+  font-size: 14px;
+}
+
+.admin-state.is-error {
+  color: var(--ad-danger);
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ad-tx-2);
+}
+
+.admin-badge--on {
+  background: var(--ad-accent-soft);
+  color: #b8c2ff;
+}
+
+.admin-badge--off {
+  background: rgba(240, 113, 120, 0.12);
+  color: #f5a0a5;
+}
+
+@media (min-width: 900px) {
+  .admin-search {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-body {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-side {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 10px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--ad-line);
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    width: max-content;
+  }
+
+  .admin-nav a,
+  .admin-nav button.nav-item {
+    white-space: nowrap;
+    padding: 9px 12px;
+  }
+
+  .admin-nav a span.label {
+    display: none;
+  }
+
+  .admin-nav__foot {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+  }
+
+  .admin-main {
+    padding: 20px 16px 32px;
+  }
+}

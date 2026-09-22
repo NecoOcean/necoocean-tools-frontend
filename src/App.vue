@@ -1,16 +1,18 @@
 <template>
   <div class="app-shell">
-    <div v-if="showOpening" id="opening" :class="{ 'is-fade': openingFade }" role="status" aria-label="页面加载中">
+    <div v-if="showOpening && !isAdminRoute" id="opening" :class="{ 'is-fade': openingFade }" role="status" aria-label="页面加载中">
       <div>
         <div class="op-id">NECOOCEAN</div>
         <div class="op-bar"><i /></div>
       </div>
     </div>
 
-    <div class="page-bg is-empty" aria-hidden="true"></div>
-    <div class="page-bg-veil" aria-hidden="true"></div>
+    <template v-if="!isAdminRoute">
+      <div class="page-bg is-empty" aria-hidden="true"></div>
+      <div class="page-bg-veil" aria-hidden="true"></div>
+    </template>
 
-    <template v-if="!isAdminArea">
+    <template v-if="!isAdminRoute">
       <nav class="nav" :class="{ 'is-solid': navSolid }" id="nav">
         <div class="visor nav-in">
           <RouterLink class="brand" to="/">
@@ -57,11 +59,11 @@
       </div>
     </template>
 
-    <main :class="{ 'main--flush': isAdminArea || isHome }">
+    <main :class="{ 'main--flush': isAdminRoute || isHome }">
       <RouterView />
     </main>
 
-    <footer v-if="!isAdminArea" class="site-footer">
+    <footer v-if="!isAdminRoute" class="site-footer">
       <div class="visor foot-in">
         <p>
           <span v-if="copyright">{{ copyright }}</span>
@@ -85,7 +87,7 @@ import { getSiteInfo } from './api/publicApi'
 
 const route = useRoute()
 const router = useRouter()
-const isAdminArea = computed(() => route.path.startsWith('/admin') && route.name !== 'admin-login')
+const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 const isHome = computed(() => route.name === 'home')
 
 const copyright = ref('')
