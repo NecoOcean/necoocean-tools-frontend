@@ -58,6 +58,22 @@
       <h2>上传文件</h2>
       <FileUploader :tool-id="toolId" @done="onUploaded" />
       <p v-if="uploadHint" class="state-line">{{ uploadHint }}</p>
+      <ul v-if="files.length" class="file-list">
+        <li v-for="f in files" :key="f.id" class="file-row">
+          <div>
+            <strong>{{ f.display_name || f.version }}</strong>
+            <span class="file-meta">
+              {{ f.platform || '通用' }} · {{ formatBytes(f.file_size) }}
+              <template v-if="f.is_latest"> · 推荐</template>
+            </span>
+          </div>
+          <div class="file-actions">
+            <button type="button" class="linkish" @click="onSetLatest(f.id)">设为推荐</button>
+            <button type="button" class="linkish danger" @click="onDeleteFile(f.id)">删除</button>
+          </div>
+        </li>
+      </ul>
+      <p v-else-if="form.status !== 1" class="state-line">工具上架后可在此列出已公开文件并管理推荐版本。</p>
     </section>
 
     <section v-if="!isNew && toolId" class="section">
@@ -74,7 +90,7 @@
         <header>
           <strong>{{ n.version }}</strong>
           <span>{{ formatDateTime(n.released_at) }}</span>
-          <button type="button" class="linkish" @click="onDeleteNote(n.id)">删除</button>
+          <button type="button" class="linkish danger" @click="onDeleteNote(n.id)">删除</button>
         </header>
         <pre>{{ n.content }}</pre>
       </article>
@@ -91,15 +107,18 @@ import { ApiError } from '../../api/http'
 import {
   createAdminTool,
   createReleaseNote,
+  deleteAdminFile,
   deleteReleaseNote,
   ensureCsrf,
   getAdminTool,
   listAdminCategories,
   listAdminReleaseNotes,
+  patchFileLatest,
   patchToolStatus,
   updateAdminTool,
 } from '../../api/adminApi'
-import { formatDateTime } from '../../utils/format'
+import { listFiles } from '../../api/publicApi'
+import { formatBytes, formatDateTime } from '../../utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -110,6 +129,7 @@ const toolId = computed(() => (isNew.value ? null : Number(route.params.id)))
 
 const categories = ref([])
 const notes = ref([])
+const files = ref([])
 const loading = ref(!isNew.value)
 const loadError = ref('')
 const busy = ref(false)
@@ -149,6 +169,7 @@ onMounted(async () => {
   if (!isNew.value) {
     await loadTool()
     await loadNotes()
+    await loadFiles()
   }
 })
 
@@ -180,6 +201,19 @@ async function loadNotes() {
     notes.value = data?.list || []
   } catch {
     notes.value = []
+  }
+}
+
+async function loadFiles() {
+  files.value = []
+  if (form.status !== 1 || !form.slug) {
+    return
+  }
+  try {
+    const data = await listFiles(form.slug)
+    files.value = data?.list || []
+  } catch {
+    files.value = []
   }
 }
 
@@ -234,6 +268,7 @@ async function toggleStatus() {
     await patchToolStatus(toolId.value, next)
     form.status = next
     hint.value = next === 1 ? '已上架' : '已下架'
+    await loadFiles()
   } catch (err) {
     isError.value = true
     hint.value = err instanceof ApiError ? err.message : '状态更新失败'
@@ -243,7 +278,36 @@ async function toggleStatus() {
 }
 
 function onUploaded() {
-  uploadHint.value = '文件已登记。可在前台专题页下载区查看（工具需上架）。'
+  uploadHint.value = '文件已登记。'
+  loadFiles()
+}
+
+async function onSetLatest(fileId) {
+  try {
+    await ensureCsrf()
+    await patchFileLatest(fileId, true)
+    uploadHint.value = '已设为推荐版本'
+    await loadTool()
+    await loadFiles()
+  } catch (err) {
+    hint.value = err instanceof ApiError ? err.message : '设置失败'
+    isError.value = true
+  }
+}
+
+async function onDeleteFile(fileId) {
+  if (!window.confirm('删除该文件（库记录 + COS 对象）？')) {
+    return
+  }
+  try {
+    await ensureCsrf()
+    await deleteAdminFile(fileId)
+    uploadHint.value = '文件已删除'
+    await loadFiles()
+  } catch (err) {
+    hint.value = err instanceof ApiError ? err.message : '删除失败'
+    isError.value = true
+  }
 }
 
 async function onAddNote() {
@@ -359,6 +423,37 @@ async function onDeleteNote(id) {
   font-size: 20px;
 }
 
+.file-list {
+  list-style: none;
+  display: grid;
+  gap: var(--sp-3);
+  margin-top: var(--sp-4);
+}
+
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+}
+
+.file-meta {
+  display: block;
+  margin-top: 4px;
+  color: var(--tx-3);
+  font-size: 13px;
+}
+
+.file-actions {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .note {
   margin-top: var(--sp-3);
   padding: var(--sp-3);
@@ -385,8 +480,12 @@ async function onDeleteNote(id) {
 
 .linkish {
   margin-left: auto;
-  color: var(--danger);
+  color: var(--brand);
   font-size: 13px;
+}
+
+.linkish.danger {
+  color: var(--danger);
 }
 
 @media (max-width: 640px) {

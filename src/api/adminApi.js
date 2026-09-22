@@ -146,6 +146,25 @@ export function patchMessageStatus(id, status) {
   return patch(`/api/v1/admin/messages/${id}/status`, { status })
 }
 
+export function pinAdminMessage(id, isPinned) {
+  return patch(`/api/v1/admin/messages/${id}/pin`, { is_pinned: isPinned })
+}
+
+export function changePassword(oldPassword, newPassword) {
+  return put('/api/v1/admin/password', {
+    old_password: oldPassword,
+    new_password: newPassword,
+  })
+}
+
+export function patchFileLatest(fileId, isLatest) {
+  return patch(`/api/v1/admin/files/${fileId}/is-latest`, { is_latest: isLatest })
+}
+
+export function cleanupOrphans() {
+  return post('/api/v1/admin/files/cleanup-orphans', {})
+}
+
 export function exportData(query = {}) {
   const params = new URLSearchParams()
   Object.entries(query).forEach(([k, v]) => {

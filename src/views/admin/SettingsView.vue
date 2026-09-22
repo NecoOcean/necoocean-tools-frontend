@@ -50,13 +50,34 @@
       </div>
       <p v-if="exportHint" class="state-line" :class="{ 'is-error': exportError }">{{ exportHint }}</p>
     </section>
+
+    <section class="section">
+      <h2>修改口令</h2>
+      <form class="form" @submit.prevent="onChangePassword">
+        <input v-model="pwd.old_password" class="search" type="password" autocomplete="current-password" placeholder="当前口令" required />
+        <input v-model="pwd.new_password" class="search" type="password" autocomplete="new-password" placeholder="新口令（8～72）" required minlength="8" maxlength="72" />
+        <div class="form__actions">
+          <button class="chip is-active" type="submit" :disabled="pwdBusy">{{ pwdBusy ? '提交中…' : '更新口令' }}</button>
+          <span v-if="pwdHint" class="state-line" :class="{ 'is-error': pwdError }">{{ pwdHint }}</span>
+        </div>
+      </form>
+    </section>
+
+    <section class="section">
+      <h2>存储维护</h2>
+      <p class="state-line">手动清理无登记的 COS 孤儿对象（与每日 03:30 任务同逻辑）。</p>
+      <button class="chip" type="button" :disabled="orphanBusy" @click="onCleanup">
+        {{ orphanBusy ? '清理中…' : '立即清理孤儿对象' }}
+      </button>
+      <p v-if="orphanHint" class="state-line" :class="{ 'is-error': orphanError }">{{ orphanHint }}</p>
+    </section>
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ApiError } from '../../api/http'
-import { downloadExport, ensureCsrf, getAdminSettings, updateAdminSettings } from '../../api/adminApi'
+import { downloadExport, changePassword, cleanupOrphans, ensureCsrf, getAdminSettings, updateAdminSettings } from '../../api/adminApi'
 
 const loading = ref(true)
 const loadError = ref('')
@@ -83,6 +104,15 @@ const includeEmail = ref(false)
 const exportBusy = ref(false)
 const exportHint = ref('')
 const exportError = ref(false)
+
+const pwd = reactive({ old_password: '', new_password: '' })
+const pwdBusy = ref(false)
+const pwdHint = ref('')
+const pwdError = ref(false)
+
+const orphanBusy = ref(false)
+const orphanHint = ref('')
+const orphanError = ref(false)
 
 onMounted(load)
 
@@ -153,6 +183,43 @@ async function onExport() {
     exportHint.value = err.message || '导出失败'
   } finally {
     exportBusy.value = false
+  }
+}
+
+async function onChangePassword() {
+  pwdBusy.value = true
+  pwdHint.value = ''
+  pwdError.value = false
+  try {
+    await ensureCsrf()
+    await changePassword(pwd.old_password, pwd.new_password)
+    pwd.old_password = ''
+    pwd.new_password = ''
+    pwdHint.value = '口令已更新'
+  } catch (err) {
+    pwdError.value = true
+    pwdHint.value = err instanceof ApiError ? err.message : '更新失败'
+  } finally {
+    pwdBusy.value = false
+  }
+}
+
+async function onCleanup() {
+  if (!window.confirm('确认立即清理孤儿对象？')) {
+    return
+  }
+  orphanBusy.value = true
+  orphanHint.value = ''
+  orphanError.value = false
+  try {
+    await ensureCsrf()
+    const result = await cleanupOrphans()
+    orphanHint.value = `完成：删除对象 ${result?.deleted_objects ?? 0}，清理占位行 ${result?.deleted_pending_rows ?? 0}`
+  } catch (err) {
+    orphanError.value = true
+    orphanHint.value = err instanceof ApiError ? err.message : '清理失败'
+  } finally {
+    orphanBusy.value = false
   }
 }
 </script>

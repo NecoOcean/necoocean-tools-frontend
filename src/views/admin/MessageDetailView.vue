@@ -24,6 +24,11 @@
           <span v-if="msg.tool_version"> · {{ msg.tool_version }}</span>
         </p>
         <pre v-if="msg.repro_steps" class="repro">{{ msg.repro_steps }}</pre>
+        <div class="actions" style="margin-top: 12px">
+          <button type="button" class="chip" :disabled="busy" @click="togglePin">
+            {{ msg.pinned ? '取消置顶' : '置顶' }}
+          </button>
+        </div>
       </article>
 
       <section class="section">
@@ -63,7 +68,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ApiError } from '../../api/http'
-import { ensureCsrf, getAdminMessage, patchMessageStatus, replyAdminMessage } from '../../api/adminApi'
+import { ensureCsrf, getAdminMessage, patchMessageStatus, pinAdminMessage, replyAdminMessage } from '../../api/adminApi'
 import { formatDateTime } from '../../utils/format'
 
 const route = useRoute()
@@ -109,6 +114,23 @@ async function setStatus(status) {
   } catch (err) {
     isError.value = true
     hint.value = err instanceof ApiError ? err.message : '更新失败'
+  } finally {
+    busy.value = false
+  }
+}
+
+async function togglePin() {
+  busy.value = true
+  hint.value = ''
+  isError.value = false
+  try {
+    await ensureCsrf()
+    await pinAdminMessage(Number(route.params.id), !msg.value.pinned)
+    await load()
+    hint.value = msg.value.pinned ? '已置顶' : '已取消置顶'
+  } catch (err) {
+    isError.value = true
+    hint.value = err instanceof ApiError ? err.message : '置顶失败'
   } finally {
     busy.value = false
   }
