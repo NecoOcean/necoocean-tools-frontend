@@ -1,0 +1,55 @@
+/* 令牌唯一来源：对齐 UI 设计规范 v1.1。D-7：一期不启用全站背景图。 */
+
+:root {
+  --bg-0: #08090c;
+  --bg-1: #0e1015;
+  --bg-2: #141720;
+  --bg-3: #1b1f2a;
+  --line-1: rgba(255, 255, 255, 0.07);
+  --line-2: rgba(255, 255, 255, 0.14);
+  --tx-1: #f2f4f8;
+  --tx-2: #9ba3b4;
+  --tx-3: #636b7d;
+  --brand: #3e7bfa;
+  --brand-dim: #2a5fd4;
+  --brand-soft: rgba(62, 123, 250, 0.13);
+  --ok: #2fa36b;
+  --warn: #d99324;
+  --danger: #e05252;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --f-sans: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --f-mono: "SFMono-Regular", Consolas, monospace;
+  --page-veil: rgba(8, 9, 12, 0.88);
+  --page-veil-2: rgba(8, 9, 12, 0.96);
+}
+
+[data-theme="light"] {
+  --bg-0: #ffffff;
+  --bg-1: #f7f8fa;
+  --bg-2: #ffffff;
+  --bg-3: #eef1f6;
+  --line-1: rgba(12, 18, 30, 0.08);
+  --line-2: rgba(12, 18, 30, 0.16);
+  --tx-1: #0d1220;
+  --tx-2: #5a6478;
+  --tx-3: #8a93a6;
+  --brand: #2a5fd4;
+  --brand-dim: #1e48a8;
+  --brand-soft: rgba(42, 95, 212, 0.09);
+  --page-veil: rgba(255, 255, 255, 0.88);
+  --page-veil-2: rgba(255, 255, 255, 0.96);
+}
