@@ -1,20 +1,32 @@
 <template>
   <RouterLink
-    class="tool-card"
+    class="card"
     :to="`/tool/${tool.slug}`"
     @mousemove="onMove"
     @mouseleave="onLeave"
   >
-    <div class="tool-card__glow" :style="glowStyle" aria-hidden="true"></div>
-    <div class="tool-card__meta">
-      <span class="tool-card__cat">{{ categoryName }}</span>
-      <span v-if="tool.latest_version" class="tool-card__ver">{{ tool.latest_version }}</span>
+    <div class="card-top">
+      <div class="appicon" aria-hidden="true">{{ initial }}</div>
+      <div>
+        <div class="card-name">
+          {{ tool.name }}
+          <span v-if="tool.latest_version" class="tier">{{ tool.latest_version }}</span>
+        </div>
+      </div>
     </div>
-    <h3 class="tool-card__title">{{ tool.name }}</h3>
-    <p class="tool-card__desc">{{ tool.summary }}</p>
-    <div class="tool-card__foot">
-      <span v-for="p in platforms" :key="p" class="tool-card__plat">{{ p }}</span>
-      <span class="tool-card__time">{{ updatedText }}</span>
+    <p class="card-desc">{{ tool.summary }}</p>
+    <div class="card-tags">
+      <span class="tag">{{ categoryName }}</span>
+      <span v-for="p in platforms" :key="p" class="tag">{{ p }}</span>
+    </div>
+    <div class="card-foot">
+      <span class="ver">{{ updatedText }}</span>
+      <span class="go">
+        进入
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </span>
     </div>
   </RouterLink>
 </template>
@@ -28,119 +40,167 @@ const props = defineProps({
 })
 
 const mx = ref(50)
-const my = ref(50)
+const my = ref(0)
 
 const categoryName = computed(() => props.tool.category?.name || '未分类')
 const platforms = computed(() => props.tool.platforms || [])
 const updatedText = computed(() => formatDateTime(props.tool.updated_at))
-const glowStyle = computed(() => ({
-  '--mx': `${mx.value}%`,
-  '--my': `${my.value}%`,
-}))
+const initial = computed(() => (props.tool.name || '?').slice(0, 1))
 
 function onMove(event) {
   const rect = event.currentTarget.getBoundingClientRect()
   mx.value = ((event.clientX - rect.left) / rect.width) * 100
   my.value = ((event.clientY - rect.top) / rect.height) * 100
+  event.currentTarget.style.setProperty('--mx', `${mx.value}%`)
+  event.currentTarget.style.setProperty('--my', `${my.value}%`)
 }
 
-function onLeave() {
+function onLeave(event) {
   mx.value = 50
-  my.value = 50
+  my.value = 0
+  event.currentTarget.style.setProperty('--mx', '50%')
+  event.currentTarget.style.setProperty('--my', '0%')
 }
 </script>
 
 <style scoped>
-.tool-card {
+.card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-  min-height: 220px;
-  padding: var(--sp-5);
+  background: var(--bg-1);
   border: 1px solid var(--line-1);
   border-radius: var(--r-lg);
-  background: var(--bg-1);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  transition: transform 0.3s var(--ease), border-color 0.3s, background 0.3s;
   overflow: hidden;
-  transition: border-color 0.25s var(--ease), background 0.25s var(--ease), transform 0.25s var(--ease);
 }
 
-.tool-card:hover {
-  border-color: var(--line-2);
-  background: var(--bg-2);
-  transform: translateY(-2px);
-}
-
-.tool-card__glow {
+.card::after {
+  content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   pointer-events: none;
-  background: radial-gradient(
-    420px circle at var(--mx) var(--my),
-    var(--brand-soft),
-    transparent 55%
-  );
+  background: radial-gradient(420px 180px at var(--mx, 50%) var(--my, 0%), var(--brand-soft), transparent 62%);
   opacity: 0;
-  transition: opacity 0.25s var(--ease);
+  transition: opacity 0.35s;
 }
 
-.tool-card:hover .tool-card__glow {
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-2);
+  background: var(--bg-2);
+}
+
+.card:hover::after {
   opacity: 1;
 }
 
-.tool-card__meta,
-.tool-card__foot {
-  position: relative;
+.card-top {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2);
-}
-
-.tool-card__meta {
-  justify-content: space-between;
-  color: var(--tx-3);
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-family: var(--f-mono);
-}
-
-.tool-card__title,
-.tool-card__desc,
-.tool-card__foot {
+  align-items: flex-start;
+  gap: var(--sp-4);
   position: relative;
+  z-index: 1;
 }
 
-.tool-card__title {
+.appicon {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  font-weight: 600;
+  background: var(--bg-3);
+  border: 1px solid var(--line-1);
+}
+
+.card-name {
   font-size: 16.5px;
   font-weight: 600;
-  line-height: 1.4;
   letter-spacing: -0.015em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.tool-card__desc {
-  flex: 1;
-  color: var(--tx-2);
+.tier {
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  padding: 2.5px 7px;
+  border-radius: 5px;
+  font-weight: 400;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.card-desc {
   font-size: 14px;
+  color: var(--tx-2);
   line-height: 1.65;
+  position: relative;
+  z-index: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.tool-card__plat {
-  padding: 2px 8px;
-  border: 1px solid var(--line-1);
-  border-radius: 999px;
-  color: var(--tx-2);
-  font-size: 12px;
+.card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
-.tool-card__time {
-  margin-left: auto;
+.tag {
+  font-size: 11.5px;
   color: var(--tx-3);
-  font-size: 12px;
+  border: 1px solid var(--line-1);
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-family: var(--f-mono);
+}
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--line-1);
+  font-size: 12.5px;
+  color: var(--tx-3);
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+
+.card-foot .ver {
+  font-family: var(--f-mono);
+}
+
+.card-foot .go {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--tx-2);
+  transition: color 0.2s, gap 0.25s var(--ease);
+}
+
+.card:hover .card-foot .go {
+  color: var(--brand);
+  gap: 9px;
+}
+
+.card-foot .go svg {
+  width: 13px;
+  height: 13px;
 }
 </style>
