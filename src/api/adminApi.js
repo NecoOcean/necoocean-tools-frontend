@@ -51,6 +51,61 @@ export function listAdminCategories() {
   return get('/api/v1/admin/categories')
 }
 
+export function createAdminCategory(body) {
+  return post('/api/v1/admin/categories', body)
+}
+
+export function updateAdminCategory(id, body) {
+  return put(`/api/v1/admin/categories/${id}`, body)
+}
+
+export function deleteAdminCategory(id) {
+  return del(`/api/v1/admin/categories/${id}`)
+}
+
+export function getAdminSettings() {
+  return get('/api/v1/admin/settings')
+}
+
+export function updateAdminSettings(body) {
+  return put('/api/v1/admin/settings', body)
+}
+
+/**
+ * 触发导出下载（C-42）。走 fetch + Blob，以便携带会话 Cookie。
+ */
+export async function downloadExport({ type = 'all', format = 'json', includeEmail = false } = {}) {
+  const url = exportData({
+    type,
+    format,
+    include_email: includeEmail ? 'true' : 'false',
+  })
+  const response = await fetch(url, { credentials: 'include' })
+  if (!response.ok) {
+    let message = `导出失败 HTTP ${response.status}`
+    const contentType = response.headers.get('content-type') || ''
+    if (contentType.includes('application/json')) {
+      const envelope = await response.json()
+      if (envelope?.message) {
+        message = envelope.message
+      }
+    }
+    throw new Error(message)
+  }
+  const blob = await response.blob()
+  const disposition = response.headers.get('content-disposition') || ''
+  const match = /filename\*?=(?:UTF-8'')?["']?([^"';]+)/i.exec(disposition)
+  const filename = match ? decodeURIComponent(match[1]) : `export.${format === 'csv' ? 'csv' : format === 'json' ? 'json' : 'zip'}`
+  const objectUrl = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = objectUrl
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(objectUrl)
+}
+
 export function createUploadTicket(toolId, body) {
   return post(`/api/v1/admin/tools/${toolId}/files/upload-ticket`, body)
 }

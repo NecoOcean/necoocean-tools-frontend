@@ -11,6 +11,8 @@ const ToolsView = () => import('../views/admin/ToolsView.vue')
 const ToolEditView = () => import('../views/admin/ToolEditView.vue')
 const MessagesView = () => import('../views/admin/MessagesView.vue')
 const MessageDetailView = () => import('../views/admin/MessageDetailView.vue')
+const CategoriesView = () => import('../views/admin/CategoriesView.vue')
+const SettingsView = () => import('../views/admin/SettingsView.vue')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -31,6 +33,8 @@ const router = createRouter({
         { path: 'tools/:id', name: 'admin-tool-edit', component: ToolEditView },
         { path: 'messages', name: 'admin-messages', component: MessagesView },
         { path: 'messages/:id', name: 'admin-message-detail', component: MessageDetailView },
+        { path: 'categories', name: 'admin-categories', component: CategoriesView },
+        { path: 'settings', name: 'admin-settings', component: SettingsView },
       ],
     },
   ],

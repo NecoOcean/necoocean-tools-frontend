@@ -1,8 +1,8 @@
 <template>
   <div class="visor">
     <section class="hero">
-      <h1>工具集</h1>
-      <p>个人自用工具的展示与下载入口。一期纯色底（D-7），封面与安装包走 COS。</p>
+      <h1>{{ siteTitle }}</h1>
+      <p>{{ homeIntro }}</p>
     </section>
 
     <div class="toolbar">
@@ -47,7 +47,7 @@
 import { onMounted, ref } from 'vue'
 import ToolCard from '../components/ToolCard.vue'
 import { ApiError } from '../api/http'
-import { listTools } from '../api/publicApi'
+import { getSiteInfo, listTools } from '../api/publicApi'
 
 const tools = ref([])
 const categories = ref([])
@@ -55,11 +55,29 @@ const categoryId = ref(null)
 const keyword = ref('')
 const loading = ref(true)
 const error = ref('')
+const siteTitle = ref('工具集')
+const homeIntro = ref('个人自用工具的展示与下载入口。一期纯色底（D-7），封面与安装包走 COS。')
 let debounceTimer = 0
 
 onMounted(() => {
+  loadSite()
   loadTools()
 })
+
+async function loadSite() {
+  try {
+    const data = await getSiteInfo()
+    if (data?.site_title) {
+      siteTitle.value = data.site_title
+      document.title = data.site_title
+    }
+    if (data?.home_intro) {
+      homeIntro.value = data.home_intro
+    }
+  } catch {
+    // 首页仍可用默认文案
+  }
+}
 
 function selectCategory(id) {
   categoryId.value = id

@@ -56,7 +56,8 @@
 
       <section class="section">
         <h2>留言</h2>
-        <MessageForm :slug="slug" @submitted="onMessageSubmitted" />
+        <p v-if="messageEnabled === false" class="state-line">留言提交已关闭，仍可浏览已有留言。</p>
+        <MessageForm v-else :slug="slug" @submitted="onMessageSubmitted" />
         <p v-if="messagesLoading" class="state-line">加载留言…</p>
         <p v-else-if="messages.length === 0" class="state-line">还没有留言</p>
         <MessageItem v-for="msg in messages" :key="msg.id" :message="msg" />
@@ -68,7 +69,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { ApiError } from '../api/http'
-import { downloadUrl, getTool, listFiles, listMessages, listReleaseNotes } from '../api/publicApi'
+import { downloadUrl, getSiteInfo, getTool, listFiles, listMessages, listReleaseNotes } from '../api/publicApi'
 import { formatBytes, formatDateTime } from '../utils/format'
 import MessageForm from '../components/MessageForm.vue'
 import MessageItem from '../components/MessageItem.vue'
@@ -87,17 +88,28 @@ const loading = ref(true)
 const filesLoading = ref(false)
 const notesLoading = ref(false)
 const messagesLoading = ref(false)
+const messageEnabled = ref(true)
 const error = ref('')
 let pollTimer = 0
 
 onMounted(() => {
   loadAll()
+  loadSiteFlags()
   pollTimer = window.setInterval(() => {
     if (props.slug) {
       loadMessages(false)
     }
   }, POLL_MS)
 })
+
+async function loadSiteFlags() {
+  try {
+    const data = await getSiteInfo()
+    messageEnabled.value = data?.message_enabled !== false
+  } catch {
+    messageEnabled.value = true
+  }
+}
 
 onUnmounted(() => {
   window.clearInterval(pollTimer)

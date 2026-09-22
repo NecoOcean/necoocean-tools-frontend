@@ -6,6 +6,8 @@
         <nav class="admin-bar__nav">
           <RouterLink to="/admin/tools">工具</RouterLink>
           <RouterLink to="/admin/messages">留言</RouterLink>
+          <RouterLink to="/admin/categories">分类</RouterLink>
+          <RouterLink to="/admin/settings">设置</RouterLink>
           <RouterLink to="/">前台</RouterLink>
           <button type="button" class="linkish" @click="onLogout">退出</button>
         </nav>
