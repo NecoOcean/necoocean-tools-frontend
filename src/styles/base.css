@@ -26,6 +26,8 @@ a {
   text-decoration: none;
 }
 
+textarea,
+select,
 button,
 input {
   font: inherit;

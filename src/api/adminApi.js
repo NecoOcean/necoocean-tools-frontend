@@ -1,12 +1,14 @@
 import { del, get, post, put } from './http'
+import { readCsrfToken } from '../utils/csrf'
 
-/** 先拉 /me 以种下 csrf_token，再登录。 */
+/**
+ * 种下 csrf_token。未登录时 /me 返回 401 属预期，只关心 Set-Cookie。
+ */
 export async function ensureCsrf() {
-  try {
-    await get('/api/v1/admin/me')
-  } catch {
-    // 未登录会 401，Cookie 仍应已下发
+  if (readCsrfToken()) {
+    return
   }
+  await fetch('/api/v1/admin/me', { credentials: 'include' }).catch(() => {})
 }
 
 export function login(username, password) {
@@ -21,6 +23,14 @@ export function me() {
   return get('/api/v1/admin/me')
 }
 
+export function listAdminTools(query = {}) {
+  return get('/api/v1/admin/tools', query)
+}
+
+export function listAdminMessages(query = {}) {
+  return get('/api/v1/admin/messages', query)
+}
+
 export function exportData(query = {}) {
   const params = new URLSearchParams()
   Object.entries(query).forEach(([k, v]) => {
@@ -32,7 +42,6 @@ export function exportData(query = {}) {
   return `/api/v1/admin/export${qs ? `?${qs}` : ''}`
 }
 
-// 其余后台接口随页面推进再补；此处预留入口避免多处散落 fetch。
 export const adminGet = get
 export const adminPost = post
 export const adminPut = put
