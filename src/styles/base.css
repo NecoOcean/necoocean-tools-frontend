@@ -339,12 +339,13 @@ button {
 }
 
 .btn-primary {
-  background: var(--brand);
+  /* D-1：主色仍为 --brand；默认态用 --brand-dim，保证白字 ≥4.5:1 */
+  background: var(--brand-dim);
   color: #fff;
 }
 
 .btn-primary:hover {
-  background: var(--brand-dim);
+  filter: brightness(0.9);
   box-shadow: 0 8px 26px -10px color-mix(in srgb, var(--brand) 70%, transparent);
 }
 
