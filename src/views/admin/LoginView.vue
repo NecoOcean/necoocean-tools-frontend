@@ -70,7 +70,7 @@ async function onSubmit() {
     await login(username, password)
     message.value = '登录成功'
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
-    router.push(redirect.startsWith('/admin') ? redirect : '/admin/tools')
+    router.push(redirect.startsWith('/admin') ? redirect : '/admin')
   } catch (err) {
     isError.value = true
     if (err instanceof ApiError && err.code === 40100) {

@@ -7,6 +7,7 @@ const AboutView = () => import('../views/AboutView.vue')
 const PrivacyView = () => import('../views/PrivacyView.vue')
 const LoginView = () => import('../views/admin/LoginView.vue')
 const AdminLayout = () => import('../views/admin/AdminLayout.vue')
+const DashboardView = () => import('../views/admin/DashboardView.vue')
 const ToolsView = () => import('../views/admin/ToolsView.vue')
 const ToolEditView = () => import('../views/admin/ToolEditView.vue')
 const MessagesView = () => import('../views/admin/MessagesView.vue')
@@ -27,7 +28,7 @@ const router = createRouter({
       component: AdminLayout,
       meta: { requiresAuth: true },
       children: [
-        { path: '', redirect: '/admin/tools' },
+        { path: '', name: 'admin-dashboard', component: DashboardView },
         { path: 'tools', name: 'admin-tools', component: ToolsView },
         { path: 'tools/new', name: 'admin-tool-new', component: ToolEditView },
         { path: 'tools/:id', name: 'admin-tool-edit', component: ToolEditView },

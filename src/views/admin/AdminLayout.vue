@@ -1,7 +1,7 @@
 <template>
   <div class="admin-root">
     <header class="admin-top">
-      <RouterLink class="admin-brand" to="/admin/tools">
+      <RouterLink class="admin-brand" to="/admin">
         <span class="admin-brand__mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
             <path d="M3 15c3.5 0 3.5-3 7-3s3.5 3 7 3 4-3 4-3" />
@@ -33,13 +33,13 @@
     <div class="admin-body">
       <aside class="admin-side">
         <nav class="admin-nav">
-          <RouterLink to="/admin/tools" :class="{ 'is-active': isTools }">
+          <RouterLink to="/admin" :class="{ 'is-active': route.name === 'admin-dashboard' }">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z" />
             </svg>
             <span class="label">首页</span>
           </RouterLink>
-          <RouterLink to="/admin/tools">
+          <RouterLink to="/admin/tools" :class="{ 'is-active': isTools }">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="4" y="4" width="7" height="7" rx="1.5" />
               <rect x="13" y="4" width="7" height="7" rx="1.5" />
