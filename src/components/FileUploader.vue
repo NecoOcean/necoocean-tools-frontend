@@ -68,6 +68,8 @@ async function upload() {
       method: ticket.upload_method || 'PUT',
       headers,
       body: file.value,
+      mode: 'cors',
+      credentials: 'omit',
     })
     if (!putRes.ok) {
       throw new Error(`COS 上传失败 HTTP ${putRes.status}`)
@@ -83,7 +85,14 @@ async function upload() {
     emit('done')
   } catch (err) {
     isError.value = true
-    hint.value = err instanceof ApiError ? err.message : (err.message || '上传失败')
+    if (err instanceof ApiError) {
+      hint.value = err.message
+    } else if (err instanceof TypeError) {
+      hint.value =
+        '直传 COS 失败（多为桶未配置 CORS）。请重启后端让其自动写入 CORS，或在控制台为当前站点 Origin 放行 PUT，并允许 Content-Type。'
+    } else {
+      hint.value = err.message || '上传失败'
+    }
   } finally {
     busy.value = false
     progress.value = '上传中…'
